@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Books</title>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<!-- Navbar -->
+<div th:replace="navbar :: body"></div>
+
+<div class="flex-fill container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-primary">
+            📚 Available Books
+        </h3>
+
+        <!-- ADD BOOK → ADMIN ONLY -->
+        <div th:if="${session.loggedUser.role == 'ADMIN'}">
+            <a href="/books/add" class="btn btn-success fw-semibold">
+                ➕ Add New Book
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Quantity</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="book : ${books}">
+                    <td th:text="${book.title}"></td>
+                    <td th:text="${book.author}"></td>
+
+                    <!-- Quantity badge -->
+                    <td>
+                        <span th:if="${book.quantity > 0}"
+                              class="badge bg-success"
+                              th:text="${book.quantity}">
+                        </span>
+
+                        <span th:unless="${book.quantity > 0}"
+                              class="badge bg-danger">
+                            0
+                        </span>
+                    </td>
+
+                    <td class="text-center">
+
+                        <!-- 📘 ISSUE BOOK -->
+                        <a th:if="${book.quantity > 0}"
+                           th:href="@{/issue/new(bookId=${book.id})}"
+                           class="btn btn-primary btn-sm me-1">
+                            Issue
+                        </a>
+
+                        <!-- OUT OF STOCK -->
+                        <button th:unless="${book.quantity > 0}"
+                                class="btn btn-secondary btn-sm me-1"
+                                disabled>
+                            Out of Stock
+                        </button>
+
+                        <!-- DELETE → ADMIN ONLY -->
+                        <a th:if="${session.loggedUser.role == 'ADMIN'}"
+                           th:href="@{/books/delete/{id}(id=${book.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this book?')">
+                            Delete
+                        </a>
+
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(books)}">
+                    <td colspan="4" class="text-center text-muted py-4">
+                        No books available
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<div th:replace="footer :: body"></div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
