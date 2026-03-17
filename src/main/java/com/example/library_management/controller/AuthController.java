@@ -21,13 +21,13 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    // 🔹 Login page
+    //  Login page
     @GetMapping("/")
     public String loginPage() {
         return "login";
     }
 
-    // 🔹 Signup page
+    //  Signup page
     @GetMapping("/signup")
     public String signupPage(Model model) {
         model.addAttribute("user", new User());
